@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,6 +20,7 @@ public class BankUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(unique = true, nullable = false, updatable = false, name = "bank_user_id")
     private UUID id;
 
     private String firstName;
@@ -32,4 +35,6 @@ public class BankUser {
     private Timestamp creationDate;
     private boolean tokenExpired;
 
+    @OneToMany(mappedBy = "bankUser", cascade = CascadeType.ALL)
+    private Set<UserTransactions> userTransactions;
 }

@@ -4,9 +4,7 @@ package org.bank.branch.attish.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
-import java.util.function.BinaryOperator;
 
 @Entity
 @Builder
@@ -25,4 +23,8 @@ public class UserTransactions {
     private UUID toUser;
     private Double amount;
     private boolean completed;
+
+    @ManyToOne
+    @JoinColumn(name = "bank_user_id")
+    private BankUser bankUser;
 }
