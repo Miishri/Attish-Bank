@@ -17,12 +17,12 @@ public class BankUserServiceImpl implements BankUserService {
     private final BankUserRepository bankUserRepository;
 
     @Override
-    public BankUser getBankUserById(UUID bankUserId) {
+    public BankUser getById(UUID bankUserId) {
         return bankUserRepository.findById(bankUserId).orElseThrow();
     }
 
     @Override
-    public boolean registerBankUser(BankUser bankUser) {
+    public boolean register(BankUser bankUser) {
         if (usernameExists(bankUser.getUsername())) return false;
 
         bankUserRepository.save(bankUser);
@@ -30,7 +30,7 @@ public class BankUserServiceImpl implements BankUserService {
     }
 
     @Override
-    public BankUser updateBankUserBalance(UUID bankUserId, double balance) {
+    public BankUser updateBalance(UUID bankUserId, double balance) {
         BankUser bankUserPlaceHolder = bankUserRepository.findById(bankUserId).orElseThrow();
         bankUserPlaceHolder.setBalance(balance);
 
@@ -38,7 +38,7 @@ public class BankUserServiceImpl implements BankUserService {
     }
 
     @Override
-    public BankUser updateBankUserPassword(UUID bankUserId, String newPassword) {
+    public BankUser updatePassword(UUID bankUserId, String newPassword) {
 
         BankUser bankUserPlaceHolder = bankUserRepository.findById(bankUserId).orElseThrow();
         bankUserPlaceHolder.setPassword(newPassword);
@@ -46,7 +46,7 @@ public class BankUserServiceImpl implements BankUserService {
     }
 
     @Override
-    public boolean deleteBankUser(UUID bankUserId) {
+    public boolean delete(UUID bankUserId) {
         if (bankUserRepository.existsById(bankUserId)) {
             bankUserRepository.deleteById(bankUserId);
             return true;
