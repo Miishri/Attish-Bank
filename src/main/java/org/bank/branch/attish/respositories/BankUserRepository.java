@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface BankUserRepository extends JpaRepository<BankUser, UUID> { }
+public interface BankUserRepository extends JpaRepository<BankUser, UUID> {
+    Boolean existsBankUserByUsername(String username);
+}

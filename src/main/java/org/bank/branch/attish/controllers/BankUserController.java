@@ -23,11 +23,6 @@ public class BankUserController {
         return bankUserService.getById(bankUserId);
     }
 
-    @PostMapping(USER_PATH)
-    public boolean createBankUser(@RequestBody BankUser bankUser) {
-        return bankUserService.register(bankUser);
-    }
-
     @PutMapping(USER_PATH + "/balance/{bankUserId}")
     public BankUser updateBankUserBalance(@PathVariable UUID bankUserId, @RequestParam double balance) {
         return bankUserService.updateBalance(bankUserId, balance);

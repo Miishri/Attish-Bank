@@ -3,10 +3,9 @@ package org.bank.branch.attish.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import java.sql.Timestamp;
 
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -36,5 +35,5 @@ public class BankUser {
     private boolean tokenExpired;
 
     @OneToMany(mappedBy = "bankUser", cascade = CascadeType.ALL)
-    private Set<UserTransactions> userTransactions;
+    private List<UserTransactions> userTransactions;
 }
