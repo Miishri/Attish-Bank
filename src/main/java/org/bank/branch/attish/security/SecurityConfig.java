@@ -8,15 +8,15 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.bank.branch.attish.security.jwt.KeyProperties;
-import org.bank.branch.attish.security.jwt.TokenAuthenticationFilter;
+import org.bank.branch.attish.security.user.BankUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -26,20 +26,19 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.oauth2.core.authorization.OAuth2AuthorizationManagers.hasScope;
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final KeyProperties rsaKeyProperties;
+    private final BankUserDetailsService userDetailsService;
 
     @Bean
     JwtEncoder jwtEncoder() {
@@ -59,13 +58,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                .headers(httpSecurityHeadersConfigurer -> {
+                    httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
+                })
                 .authorizeHttpRequests(
                         (requests) ->
                                 requests
-                                        .requestMatchers("/login", "/register")
+                                        .requestMatchers("/login", "/register", "/", "/h2-console/**")
                                         .permitAll()
                                         .requestMatchers("/bank-user/*")
-                                        .access(hasScope("*"))
+                                        .hasRole("USER")
                                         .anyRequest()
                                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
@@ -79,8 +81,7 @@ public class SecurityConfig {
                             ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                         })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+                .userDetailsService(userDetailsService);
         return http.build();
     }
 
@@ -97,18 +98,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public  TokenAuthenticationFilter jwtAuthenticationFilter() {
-        return new TokenAuthenticationFilter();
     }
 }

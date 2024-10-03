@@ -1,16 +1,19 @@
 package org.bank.branch.attish.security.jwt;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.bank.branch.attish.models.BankUser;
-import org.bank.branch.attish.models.UserTransactions;
 import org.bank.branch.attish.respositories.BankUserRepository;
-import org.bank.branch.attish.respositories.UserTransactionsRepository;
+import org.bank.branch.attish.security.user.BankUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,40 +23,41 @@ import java.util.List;
 @RestController
 public class AuthController {
     private final JwtTokenService jwtTokenService;
-    private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final BankUserRepository bankUserRepository;
-    private final UserTransactionsRepository transactionsRepository;
+    private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
-    public AuthController(JwtTokenService jwtTokenService, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, BankUserRepository bankUserRepository, UserTransactionsRepository transactionsRepository) {
+    public AuthController(JwtTokenService jwtTokenService,
+                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                          BankUserRepository bankUserRepository) {
         this.jwtTokenService = jwtTokenService;
-        this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.bankUserRepository = bankUserRepository;
-        this.transactionsRepository = transactionsRepository;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody BankUser user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    @PostMapping("login")
+    public ResponseEntity<String> login(SecurityContext currentContext, HttpServletRequest request, HttpServletResponse response, @RequestBody BankUser bankUser) {
+
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("*"));
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new BankUserDetails(bankUser), authorities);
+
+        currentContext.setAuthentication(authentication);
+        securityContextRepository.saveContext(currentContext, request, response);
+
         String token = jwtTokenService.generateToken(authentication);
-        return new ResponseEntity<>("Bearer " + token, HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
+    @PostMapping("generate-token")
+    public String token(Authentication authentication) {
+        return jwtTokenService.generateToken(authentication);
+    }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody BankUser bankUser) {
+    public ResponseEntity<Object> register(@RequestBody BankUser bankUser) {
         if (bankUserRepository.existsBankUserByUsername(bankUser.getUsername())) {
-            return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Username Taken!", HttpStatus.BAD_REQUEST);
         }
-
-        List<UserTransactions> userTransactions = transactionsRepository.saveAll(bankUser.getUserTransactions());
 
         BankUser user = BankUser.builder()
                 .username(bankUser.getUsername())
@@ -63,11 +67,12 @@ public class AuthController {
                 .firstName(bankUser.getFirstName())
                 .lastName(bankUser.getLastName())
                 .tokenExpired(false)
-                .userTransactions(userTransactions)
+                .userTransactions(null)
+                .userType(bankUser.getUserType())
                 .build();
 
-        bankUserRepository.save(user);
+        BankUser savedBankUser = bankUserRepository.save(user);
 
-        return new ResponseEntity<>("Registration Completed!", HttpStatus.OK);
+        return new ResponseEntity<>(savedBankUser, HttpStatus.OK);
     }
 }

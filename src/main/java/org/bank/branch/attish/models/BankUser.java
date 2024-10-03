@@ -36,4 +36,7 @@ public class BankUser {
 
     @OneToMany(mappedBy = "bankUser", cascade = CascadeType.ALL)
     private List<UserTransactions> userTransactions;
+
+    @Column(updatable = false)
+    private String userType = "USER";
 }
