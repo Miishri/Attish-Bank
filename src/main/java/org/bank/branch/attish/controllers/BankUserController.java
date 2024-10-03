@@ -28,12 +28,12 @@ public class BankUserController {
         return bankUserService.register(bankUser);
     }
 
-    @PutMapping(USER_PATH_ID)
+    @PutMapping(USER_PATH + "/balance/{bankUserId}")
     public BankUser updateBankUserBalance(@PathVariable UUID bankUserId, @RequestParam double balance) {
         return bankUserService.updateBalance(bankUserId, balance);
     }
 
-    @PutMapping(USER_PATH_ID)
+    @PutMapping(USER_PATH + "/password/{bankUserId}")
     public BankUser updateBankUserPassword(@PathVariable UUID bankUserId, @RequestParam String password) {
         return bankUserService.updatePassword(bankUserId, password);
     }

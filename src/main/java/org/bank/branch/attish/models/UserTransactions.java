@@ -10,7 +10,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-@Table
+@Table(name = "bank_user_transactions")
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTransactions {
