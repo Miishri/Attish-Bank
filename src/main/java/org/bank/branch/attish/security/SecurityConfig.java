@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.bank.branch.attish.security.jwt.KeyProperties;
+import org.bank.branch.attish.security.jwt.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -76,7 +78,8 @@ public class SecurityConfig {
                             ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                             ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                         })
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -102,5 +105,10 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public  TokenAuthenticationFilter jwtAuthenticationFilter() {
+        return new TokenAuthenticationFilter();
     }
 }
