@@ -7,7 +7,8 @@ import java.util.UUID;
 public interface BankUserService {
 
     BankUser getBankUserById(UUID bankUserId);
-    BankUser registerBankUser(BankUser bankUser);
-    BankUser updateBankUser(UUID bankUserId, BankUser bankUser);
+    boolean registerBankUser(BankUser bankUser);
+    BankUser updateBankUserBalance(UUID bankUserId, double balance);
+    BankUser updateBankUserPassword(UUID bankUserId, String newPassword);
     boolean deleteBankUser(UUID bankUserId);
 }
