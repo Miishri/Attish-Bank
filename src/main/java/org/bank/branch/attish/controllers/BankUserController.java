@@ -3,7 +3,7 @@ package org.bank.branch.attish.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.models.BankUser;
-import org.bank.branch.attish.security.BankUserService;
+import org.bank.branch.attish.services.BankUserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

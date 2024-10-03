@@ -1,4 +1,4 @@
-package org.bank.branch.attish.security;
+package org.bank.branch.attish.services;
 
 import org.bank.branch.attish.models.BankUser;
 

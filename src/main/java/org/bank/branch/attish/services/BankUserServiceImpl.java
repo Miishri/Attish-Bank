@@ -1,10 +1,9 @@
-package org.bank.branch.attish.security;
+package org.bank.branch.attish.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
