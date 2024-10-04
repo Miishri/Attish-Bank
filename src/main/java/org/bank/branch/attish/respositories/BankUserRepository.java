@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface BankUserRepository extends JpaRepository<BankUser, UUID> {
     Boolean existsBankUserByUsername(String username);
     BankUser findBankUserByUsername(String username);
+    Boolean deleteBankUserByUsername(String username);
 }

@@ -15,6 +15,7 @@ import java.util.UUID;
 @Table(name = "bank_user")
 @Setter
 @Getter
+@Data
 public class BankUser {
 
     @Id
@@ -32,10 +33,6 @@ public class BankUser {
 
     @CreationTimestamp
     private Timestamp creationDate;
-    private boolean tokenExpired;
-
-    @OneToMany(mappedBy = "bankUser", cascade = CascadeType.ALL)
-    private List<UserTransactions> userTransactions;
 
     @Column(updatable = false)
     private String userType = "USER";

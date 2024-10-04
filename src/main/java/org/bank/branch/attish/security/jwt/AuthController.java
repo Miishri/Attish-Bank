@@ -2,6 +2,7 @@ package org.bank.branch.attish.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
 import org.bank.branch.attish.security.user.BankUserDetails;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class AuthController {
     private final JwtTokenService jwtTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -37,6 +39,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<String> login(SecurityContext currentContext, HttpServletRequest request, HttpServletResponse response, @RequestBody BankUser bankUser) {
+        log.info("USER LOGGED IN WITH BODY : " + bankUser);
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("*"));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new BankUserDetails(bankUser), authorities);
@@ -46,11 +49,6 @@ public class AuthController {
 
         String token = jwtTokenService.generateToken(authentication);
         return new ResponseEntity<>(token, HttpStatus.OK);
-    }
-
-    @PostMapping("generate-token")
-    public String token(Authentication authentication) {
-        return jwtTokenService.generateToken(authentication);
     }
 
     @PostMapping("register")
@@ -66,8 +64,6 @@ public class AuthController {
                 .birthdate(bankUser.getBirthdate())
                 .firstName(bankUser.getFirstName())
                 .lastName(bankUser.getLastName())
-                .tokenExpired(false)
-                .userTransactions(null)
                 .userType(bankUser.getUserType())
                 .build();
 
