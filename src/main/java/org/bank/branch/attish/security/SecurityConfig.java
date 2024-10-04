@@ -67,7 +67,7 @@ public class SecurityConfig {
                                         .requestMatchers("/login", "/register", "/", "/h2-console/**")
                                         .permitAll()
                                         .requestMatchers("/bank-user/*")
-                                        .hasRole("USER")
+                                        .authenticated()
                                         .anyRequest()
                                         .authenticated())
                 .httpBasic(Customizer.withDefaults())

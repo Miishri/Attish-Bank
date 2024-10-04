@@ -19,7 +19,7 @@ public class BankUserController {
     private final BankUserService bankUserService;
 
     @GetMapping(USER_PATH_ID)
-    public BankUser getBankUserById(@PathVariable("bankUserId") UUID bankUserId) {
+    public BankUser getBankUserById(@PathVariable UUID bankUserId) {
         return bankUserService.getById(bankUserId);
     }
 
