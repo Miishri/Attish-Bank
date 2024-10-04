@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @Slf4j
@@ -39,7 +41,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<String> login(SecurityContext currentContext, HttpServletRequest request, HttpServletResponse response, @RequestBody BankUser bankUser) {
-        log.info("USER LOGGED IN WITH BODY : " + bankUser);
+        log.info("USER LOGGED IN WITH BODY : {}", bankUser);
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("*"));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new BankUserDetails(bankUser), authorities);
@@ -57,6 +59,9 @@ public class AuthController {
             return new ResponseEntity<>("Username Taken!", HttpStatus.BAD_REQUEST);
         }
 
+        SecureRandom random = new SecureRandom();
+        long n = (random.nextLong() ^ System.currentTimeMillis());
+
         BankUser user = BankUser.builder()
                 .username(bankUser.getUsername())
                 .password(bCryptPasswordEncoder.encode((bankUser.getPassword())))
@@ -64,7 +69,7 @@ public class AuthController {
                 .birthdate(bankUser.getBirthdate())
                 .firstName(bankUser.getFirstName())
                 .lastName(bankUser.getLastName())
-                .userType(bankUser.getUserType())
+                .transactionId(Long.valueOf(Long.toString(n).substring(12)))
                 .build();
 
         BankUser savedBankUser = bankUserRepository.save(user);

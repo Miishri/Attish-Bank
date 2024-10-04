@@ -20,7 +20,7 @@ public class BankUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(unique = true, nullable = false, updatable = false, name = "bank_user_id")
+    @Column(unique = true, nullable = false, updatable = false)
     private UUID id;
 
     private String firstName;
@@ -28,12 +28,12 @@ public class BankUser {
     private String birthdate;
     private Double balance;
 
+    @Column(unique = true, nullable = false)
+    private Long transactionId;
+
     private String username;
     private String password;
 
     @CreationTimestamp
     private Timestamp creationDate;
-
-    @Column(updatable = false)
-    private String userType = "USER";
 }

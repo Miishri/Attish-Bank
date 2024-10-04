@@ -16,31 +16,34 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BankUserController {
 
-    public static final String USER_PATH = "api/bank/";
+    public static final String USER_PATH = "api/bank";
     public static final String USER_PATH_ID = USER_PATH + "{bankUserId}";
 
     private final BankUserService bankUserService;
-    private final IUserAuthenticationFacade userAuthenticationFacade;
 
     @GetMapping(USER_PATH_ID)
     public BankUser getBankUserById(@PathVariable UUID bankUserId) {
         return bankUserService.getById(bankUserId);
     }
 
-    @PutMapping(USER_PATH + "/balance")
-    public BankUser updateBankUserBalance(@PathVariable UUID bankUserId, @RequestParam double balance) {
-        return bankUserService.updateBalance(bankUserId, balance);
+    @PutMapping(USER_PATH + "/update/balance")
+    public BankUser updateBankUserBalance(@RequestParam double balance) {
+        return bankUserService.updateBalance(balance);
     }
 
-    @PutMapping(USER_PATH + "/password/{bankUserId}")
-    public BankUser updateBankUserPassword(@PathVariable UUID bankUserId, @RequestParam String password) {
-        return bankUserService.updatePassword(bankUserId, password);
+    @PutMapping(USER_PATH + "/reset/password")
+    public BankUser updateBankUserPassword(@RequestParam String password) {
+        return bankUserService.updatePassword(password);
     }
 
-    @DeleteMapping(USER_PATH)
-    public boolean deleteBankUser() {
-        String bankUsername = userAuthenticationFacade.getUsername();
-        return bankUserService.delete(bankUsername);
+    @PutMapping("/transfer")
+    public Boolean transferBalance(@RequestParam double amount, @RequestParam Long toBankUserId) {
+        return bankUserService.transfer(amount, toBankUserId);
+    }
+
+    @DeleteMapping(USER_PATH + "/delete")
+    public Boolean deleteBankUser() {
+        return bankUserService.delete();
     }
 
 }

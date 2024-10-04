@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
+import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BankUserServiceImpl implements BankUserService {
 
     private final BankUserRepository bankUserRepository;
+    private final IUserAuthenticationFacade userAuthenticationFacade;
 
     @Override
     public BankUser getById(UUID bankUserId) {
@@ -22,22 +23,51 @@ public class BankUserServiceImpl implements BankUserService {
     }
 
     @Override
-    public BankUser updateBalance(UUID bankUserId, double balance) {
-        BankUser bankUserPlaceHolder = bankUserRepository.findById(bankUserId).orElseThrow();
-        bankUserPlaceHolder.setBalance(balance);
-
-        return bankUserRepository.save(bankUserPlaceHolder);
+    public BankUser updateBalance(double balance) {
+        BankUser updatedUser = getAuthenticatedUser();
+        updatedUser.setBalance(balance);
+        return bankUserRepository.save(updatedUser);
     }
 
     @Override
-    public BankUser updatePassword(UUID bankUserId, String newPassword) {
-        BankUser bankUserPlaceHolder = bankUserRepository.findById(bankUserId).orElseThrow();
-        bankUserPlaceHolder.setPassword(newPassword);
-        return bankUserRepository.save(bankUserPlaceHolder);
+    public BankUser updatePassword(String newPassword) {
+        BankUser updatedUser = getAuthenticatedUser();
+        updatedUser.setPassword(newPassword);
+        return bankUserRepository.save(updatedUser);
     }
 
     @Override
-    public boolean delete(String bankUsername) {
-        return bankUserRepository.deleteBankUserByUsername(bankUsername);
+    public boolean delete() {
+        return bankUserRepository.deleteBankUserByUsername(getAuthenticatedUser().getUsername());
+    }
+
+    @Override
+    public Boolean transfer(double amount, Long toBankUserId) {
+        if (bankUserRepository.existsBankUserByTransactionId(toBankUserId)) {
+            BankUser fromUser = getAuthenticatedUser();
+
+            if (hasBalance(fromUser, toBankUserId)) {
+
+                BankUser toUser = bankUserRepository.findBankUserByTransactionId(toBankUserId);
+
+                fromUser.setBalance(fromUser.getBalance() - amount);
+                toUser.setBalance(toUser.getBalance() + amount);
+
+                bankUserRepository.save(toUser);
+                bankUserRepository.save(fromUser);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private BankUser getAuthenticatedUser() {
+        String bankUsername = userAuthenticationFacade.getUsername();
+        return bankUserRepository.findBankUserByUsername(bankUsername);
+    }
+
+    private boolean hasBalance(BankUser bankUser, double transferAmount) {
+        return bankUser.getBalance() > 0 && bankUser.getBalance() >= transferAmount;
     }
 }

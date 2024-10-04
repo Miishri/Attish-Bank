@@ -16,7 +16,7 @@ public class BankUserDetails implements UserDetails {
     public BankUserDetails(BankUser user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.authorities = new SimpleGrantedAuthority(user.getUserType());
+        this.authorities = new SimpleGrantedAuthority("*");
     }
 
     @Override
