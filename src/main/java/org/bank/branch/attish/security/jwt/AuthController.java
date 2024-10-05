@@ -45,6 +45,10 @@ public class AuthController {
     public ResponseEntity<String> login(SecurityContext currentContext, HttpServletRequest request, HttpServletResponse response, @RequestBody BankUser bankUser) {
         log.info("USER LOGGED IN WITH BODY : {}", bankUser);
 
+        if (!bankUserRepository.existsBankUserByUsername(bankUser.getUsername())){
+            return new ResponseEntity<>("USER NOT FOUND", HttpStatus.UNAUTHORIZED);
+        }
+
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("*"));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new BankUserDetails(bankUser), authorities);
 

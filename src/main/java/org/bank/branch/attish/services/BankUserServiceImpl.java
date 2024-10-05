@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLOutput;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -40,12 +41,17 @@ public class BankUserServiceImpl implements BankUserService {
 
     @Override
     public boolean delete() {
-        return bankUserRepository.deleteBankUserByUsername(getAuthenticatedUser().getUsername());
+        System.out.println("ACCOUNT DELETED");
+        if (getAuthenticatedUser().getId() == null) {
+            return false;
+        }
+        bankUserRepository.deleteById(getAuthenticatedUser().getId());
+        return true;
     }
 
     @Override
     public Boolean transfer(double amount, Long toBankUserId) {
-        if (bankUserRepository.existsBankUserByTransactionId(toBankUserId)) {
+        if (bankUserRepository.existsBankUserByTransactionId(toBankUserId) && !Objects.equals(toBankUserId, getAuthenticatedUser().getTransactionId())) {
             BankUser fromUser = getAuthenticatedUser();
             BankUser toUser = bankUserRepository.findBankUserByTransactionId(toBankUserId);
 
