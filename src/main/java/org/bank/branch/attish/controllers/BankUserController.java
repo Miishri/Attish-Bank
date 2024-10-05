@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class BankUserController {
 
     public static final String USER_PATH = "api/bank";
@@ -26,6 +27,11 @@ public class BankUserController {
         return bankUserService.getById(bankUserId);
     }
 
+    @GetMapping(USER_PATH + "/data")
+    public BankUser getUserData() {
+        return bankUserService.getData();
+    }
+
     @PutMapping(USER_PATH + "/update/balance")
     public BankUser updateBankUserBalance(@RequestParam double balance) {
         return bankUserService.updateBalance(balance);
@@ -36,7 +42,7 @@ public class BankUserController {
         return bankUserService.updatePassword(password);
     }
 
-    @PutMapping("/transfer")
+    @PutMapping(USER_PATH + "/transfer")
     public Boolean transferBalance(@RequestParam double amount, @RequestParam Long toBankUserId) {
         return bankUserService.transfer(amount, toBankUserId);
     }

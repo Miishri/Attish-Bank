@@ -5,6 +5,5 @@ import org.springframework.security.core.Authentication;
 
 public interface IUserAuthenticationFacade {
     Authentication getAuthentication();
-    BankUserDetails getUserDetails();
     String getUsername();
 }

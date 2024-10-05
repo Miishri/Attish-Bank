@@ -15,12 +15,7 @@ public class UserAuthenticationFacade implements IUserAuthenticationFacade{
     }
 
     @Override
-    public BankUserDetails getUserDetails() {
-        return (BankUserDetails) getAuthentication().getPrincipal();
-    }
-
-    @Override
     public String getUsername() {
-        return getUserDetails().getUsername();
+        return getAuthentication().getName();
     }
 }

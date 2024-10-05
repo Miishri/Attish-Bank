@@ -8,8 +8,10 @@ import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BankUserServiceImpl implements BankUserService {
@@ -45,10 +47,13 @@ public class BankUserServiceImpl implements BankUserService {
     public Boolean transfer(double amount, Long toBankUserId) {
         if (bankUserRepository.existsBankUserByTransactionId(toBankUserId)) {
             BankUser fromUser = getAuthenticatedUser();
+            BankUser toUser = bankUserRepository.findBankUserByTransactionId(toBankUserId);
 
-            if (hasBalance(fromUser, toBankUserId)) {
+            System.out.println("TRANSFERING FROM: " + fromUser);
 
-                BankUser toUser = bankUserRepository.findBankUserByTransactionId(toBankUserId);
+            if (hasBalance(fromUser, amount)) {
+                System.out.println("TRANSFERED");
+
 
                 fromUser.setBalance(fromUser.getBalance() - amount);
                 toUser.setBalance(toUser.getBalance() + amount);
@@ -62,12 +67,19 @@ public class BankUserServiceImpl implements BankUserService {
         return false;
     }
 
+    @Override
+    public BankUser getData() {
+        System.out.println("TRIED TO FETCH DATA");
+        return getAuthenticatedUser();
+    }
+
     private BankUser getAuthenticatedUser() {
         String bankUsername = userAuthenticationFacade.getUsername();
+        System.out.println(bankUsername);
         return bankUserRepository.findBankUserByUsername(bankUsername);
     }
 
     private boolean hasBalance(BankUser bankUser, double transferAmount) {
-        return bankUser.getBalance() > 0 && bankUser.getBalance() >= transferAmount;
+        return bankUser.getBalance() - transferAmount >= 0;
     }
 }

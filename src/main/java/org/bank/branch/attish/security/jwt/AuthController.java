@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.Random;
 
 @RestController
 @Slf4j
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
     private final JwtTokenService jwtTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -69,7 +71,7 @@ public class AuthController {
                 .birthdate(bankUser.getBirthdate())
                 .firstName(bankUser.getFirstName())
                 .lastName(bankUser.getLastName())
-                .transactionId(Long.valueOf(Long.toString(n).substring(12)))
+                .transactionId(n)
                 .build();
 
         BankUser savedBankUser = bankUserRepository.save(user);

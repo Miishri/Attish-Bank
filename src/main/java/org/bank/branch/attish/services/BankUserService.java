@@ -12,4 +12,5 @@ public interface BankUserService {
     BankUser updatePassword(String newPassword);
     boolean delete();
     Boolean transfer(double amount, Long toBankUserId);
+    BankUser getData();
 }

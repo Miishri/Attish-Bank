@@ -1,6 +1,8 @@
 package org.bank.branch.attish.models;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,15 +25,24 @@ public class BankUser {
     @Column(unique = true, nullable = false, updatable = false)
     private UUID id;
 
+    @NotBlank(message = "First name cannot be empty")
     private String firstName;
+
+    @NotBlank(message = "Last name cannot be empty")
     private String lastName;
+
+    @NotBlank(message = "Birthdate cannot be empty")
     private String birthdate;
+
     private Double balance;
 
     @Column(unique = true, nullable = false)
     private Long transactionId;
 
+    @NotBlank(message = "Birthdate cannot be empty")
     private String username;
+
+    @NotBlank(message = "Birthdate cannot be empty")
     private String password;
 
     @CreationTimestamp
