@@ -26,7 +26,7 @@ import java.util.Random;
 
 @RestController
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"https://attish-bank-site.vercel.app/", "http://localhost:5173"})
 public class AuthController {
     private final JwtTokenService jwtTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;

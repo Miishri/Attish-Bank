@@ -91,7 +91,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of("https://localhost:8080", "https://attish-bank.vercel.app", "http://localhost:5173"));
+                List.of("https://localhost:8080", "https://attish-bank-siteomm.vercel.app", "http://localhost:5173"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -84,5 +84,6 @@ public class BootstrapUser implements CommandLineRunner {
 
         log.info("BOOTSTRAPPING TEST USERS");
 
-        bankUserRepository.saveAll(Arrays.asList(user1, user2, user3, user4, user5));    }
+        bankUserRepository.saveAll(Arrays.asList(admin,
+                user1, user2, user3, user4, user5));    }
 }

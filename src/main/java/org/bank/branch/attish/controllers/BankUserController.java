@@ -17,7 +17,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"https://attish-bank-site.vercel.app/", "http://localhost:5173"})
 public class BankUserController {
 
     public static final String USER_PATH = "api/bank";
