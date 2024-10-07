@@ -37,7 +37,7 @@ public class BootstrapUser implements CommandLineRunner {
                 .birthdate("1985-04-12")
                 .balance(1500.00)
                 .username("jdoe")
-                .transactionId(1234567890123456789L)
+                .transactionId(4234324234242424242L)
                 .password("password1")
                 .build();
 
