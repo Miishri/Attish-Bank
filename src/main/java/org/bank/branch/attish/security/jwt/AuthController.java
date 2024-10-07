@@ -43,9 +43,11 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<String> login(SecurityContext currentContext, HttpServletRequest request, HttpServletResponse response, @RequestBody BankUser bankUser) {
-        log.info("USER LOGGED IN WITH BODY : {}", bankUser);
+        log.info("IN AUTH CONTROLLER - METHOD LOGIN : Login Attempt [{}]", bankUser.getUsername());
 
         if (!bankUserRepository.existsBankUserByUsername(bankUser.getUsername())){
+            log.error("USER DOES NOT EXIST");
+
             return new ResponseEntity<>("USER NOT FOUND", HttpStatus.UNAUTHORIZED);
         }
 
@@ -56,12 +58,18 @@ public class AuthController {
         securityContextRepository.saveContext(currentContext, request, response);
 
         String token = jwtTokenService.generateToken(authentication);
+
+        log.info("AUTH CONTROLLER - USER AUTHENTICATED");
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("register")
     public ResponseEntity<Object> register(@RequestBody BankUser bankUser) {
+        log.info("IN AUTH CONTROLLER - METHOD Register : Register Attempt [{}]", bankUser.getUsername());
+
         if (bankUserRepository.existsBankUserByUsername(bankUser.getUsername())) {
+            log.error("USERNAME WAS ALREADY TAKEN : {}", bankUser.getUsername());
+
             return new ResponseEntity<>("Username Taken!", HttpStatus.BAD_REQUEST);
         }
 
@@ -79,6 +87,8 @@ public class AuthController {
                 .build();
 
         BankUser savedBankUser = bankUserRepository.save(user);
+
+        log.info("IN AUTH CONTROLLER - USER REGISTERED");
 
         return new ResponseEntity<>(savedBankUser, HttpStatus.OK);
     }

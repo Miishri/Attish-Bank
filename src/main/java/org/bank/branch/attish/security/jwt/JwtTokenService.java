@@ -1,6 +1,7 @@
 package org.bank.branch.attish.security.jwt;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -11,6 +12,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Service
+@Slf4j
 public class JwtTokenService {
     private final JwtEncoder jwtEncoder;
 
@@ -29,6 +31,8 @@ public class JwtTokenService {
                         .subject(authentication.getName())
                         .claim("scope", "*")
                         .build();
+
+        log.info("IN JwtTokenService - AUTHENTICATED USER JWT TOKEN GENERATED");
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }

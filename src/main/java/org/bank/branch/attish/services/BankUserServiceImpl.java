@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLOutput;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,6 +24,13 @@ public class BankUserServiceImpl implements BankUserService {
     @Override
     public BankUser getById(UUID bankUserId) {
         return bankUserRepository.findById(bankUserId).orElseThrow();
+    }
+
+    @Override
+    public List<BankUser> getUsers() {
+        return bankUserRepository.findAll().stream()
+                .filter(bankUser -> isNotCurrentUser(bankUser))
+                .toList();
     }
 
     @Override
@@ -41,7 +49,6 @@ public class BankUserServiceImpl implements BankUserService {
 
     @Override
     public boolean delete() {
-        System.out.println("ACCOUNT DELETED");
         if (getAuthenticatedUser().getId() == null) {
             return false;
         }
@@ -55,11 +62,9 @@ public class BankUserServiceImpl implements BankUserService {
             BankUser fromUser = getAuthenticatedUser();
             BankUser toUser = bankUserRepository.findBankUserByTransactionId(toBankUserId);
 
-            System.out.println("TRANSFERING FROM: " + fromUser);
 
             if (hasBalance(fromUser, amount)) {
-                System.out.println("TRANSFERED");
-
+                log.error("IN BankUserService - TRANSACTION COMPLETED");
 
                 fromUser.setBalance(fromUser.getBalance() - amount);
                 toUser.setBalance(toUser.getBalance() + amount);
@@ -70,19 +75,27 @@ public class BankUserServiceImpl implements BankUserService {
             }
         }
 
+        log.error("IN BankUserService - TRANSACTION FAILED");
         return false;
     }
 
     @Override
     public BankUser getData() {
-        System.out.println("TRIED TO FETCH DATA");
         return getAuthenticatedUser();
     }
 
     private BankUser getAuthenticatedUser() {
         String bankUsername = userAuthenticationFacade.getUsername();
-        System.out.println(bankUsername);
         return bankUserRepository.findBankUserByUsername(bankUsername);
+    }
+
+    private boolean isNotCurrentUser(BankUser bankUser) {
+        if (Objects.equals(bankUser.getTransactionId(), getAuthenticatedUser().getTransactionId())) {
+            log.info("IN BankUserService - CURRENT USER FILTERED FROM LIST");
+            return true;
+        }
+
+        return false;
     }
 
     private boolean hasBalance(BankUser bankUser, double transferAmount) {
