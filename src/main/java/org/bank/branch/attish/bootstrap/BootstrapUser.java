@@ -21,6 +21,16 @@ public class BootstrapUser implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        BankUser admin = BankUser.builder()
+                .firstName("Admin")
+                .lastName("User")
+                .birthdate("2010-10-10")
+                .balance(99999.00)
+                .username("admin")
+                .transactionId(1234567890123456789L)
+                .password("admin")
+                .build();
+
         BankUser user1 = BankUser.builder()
                 .firstName("John")
                 .lastName("Doe")
