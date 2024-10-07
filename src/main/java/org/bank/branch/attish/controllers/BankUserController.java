@@ -2,6 +2,7 @@ package org.bank.branch.attish.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bank.branch.attish.models.BankDTO;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
 import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
@@ -32,7 +33,7 @@ public class BankUserController {
     }
 
     @GetMapping(USER_PATH + "/users")
-    public List<BankUser> getBankUsers() {
+    public List<BankDTO> getBankUsers() {
         log.info("IN BankUserController - All Bank Users Fetched ");
 
         return bankUserService.getUsers();

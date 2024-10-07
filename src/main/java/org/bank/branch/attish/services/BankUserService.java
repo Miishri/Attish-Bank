@@ -1,5 +1,6 @@
 package org.bank.branch.attish.services;
 
+import org.bank.branch.attish.models.BankDTO;
 import org.bank.branch.attish.models.BankUser;
 import org.springframework.security.core.Authentication;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
 public interface BankUserService {
 
     BankUser getById(UUID bankUserId);
-    List<BankUser> getUsers();
+    List<BankDTO> getUsers();
     BankUser updateBalance(double balance);
     BankUser updatePassword(String newPassword);
     boolean delete();

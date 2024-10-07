@@ -2,6 +2,7 @@ package org.bank.branch.attish.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bank.branch.attish.models.BankDTO;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
 import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
@@ -27,9 +28,16 @@ public class BankUserServiceImpl implements BankUserService {
     }
 
     @Override
-    public List<BankUser> getUsers() {
+    public List<BankDTO> getUsers() {
         return bankUserRepository.findAll().stream()
                 .filter(bankUser -> isNotCurrentUser(bankUser))
+                .map(bankUser -> BankDTO.builder()
+                        .transactionId(bankUser.getTransactionId())
+                        .firstName(bankUser.getFirstName())
+                        .lastName(bankUser.getLastName())
+                        .birthDate(bankUser.getBirthdate())
+                        .creationDate(bankUser.getCreationDate())
+                        .build())
                 .toList();
     }
 
