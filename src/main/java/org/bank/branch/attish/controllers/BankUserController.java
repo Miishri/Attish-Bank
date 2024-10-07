@@ -33,7 +33,7 @@ public class BankUserController {
 
     @GetMapping(USER_PATH + "/users")
     public List<BankUser> getBankUsers() {
-        log.info("IN BankUserController - All Bank Users Fetched");
+        log.info("IN BankUserController - All Bank Users Fetched ");
 
         return bankUserService.getUsers();
     }
