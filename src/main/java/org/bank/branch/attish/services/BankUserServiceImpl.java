@@ -30,9 +30,9 @@ public class BankUserServiceImpl implements BankUserService {
     @Override
     public List<BankDTO> getUsers() {
         return bankUserRepository.findAll().stream()
-                .filter(bankUser -> isNotCurrentUser(bankUser))
                 .map(bankUser -> BankDTO.builder()
                         .transactionId(bankUser.getTransactionId())
+                        .username(bankUser.getUsername())
                         .firstName(bankUser.getFirstName())
                         .lastName(bankUser.getLastName())
                         .birthDate(bankUser.getBirthdate())
@@ -95,15 +95,6 @@ public class BankUserServiceImpl implements BankUserService {
     private BankUser getAuthenticatedUser() {
         String bankUsername = userAuthenticationFacade.getUsername();
         return bankUserRepository.findBankUserByUsername(bankUsername);
-    }
-
-    private boolean isNotCurrentUser(BankUser bankUser) {
-        if (Objects.equals(bankUser.getTransactionId(), getAuthenticatedUser().getTransactionId())) {
-            log.info("IN BankUserService - CURRENT USER FILTERED FROM LIST");
-            return true;
-        }
-
-        return false;
     }
 
     private boolean hasBalance(BankUser bankUser, double transferAmount) {
