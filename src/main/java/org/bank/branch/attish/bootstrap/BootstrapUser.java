@@ -2,8 +2,9 @@ package org.bank.branch.attish.bootstrap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.models.BankUser;
+import org.bank.branch.attish.models.UserTransaction;
 import org.bank.branch.attish.respositories.BankUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bank.branch.attish.respositories.UserTransactionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +15,11 @@ import java.util.Arrays;
 public class BootstrapUser implements CommandLineRunner {
 
     private final BankUserRepository bankUserRepository;
+    private final UserTransactionRepository userTransactionRepository;
 
-    public BootstrapUser(BankUserRepository bankUserRepository) {
+    public BootstrapUser(BankUserRepository bankUserRepository, UserTransactionRepository userTransactionRepository) {
         this.bankUserRepository = bankUserRepository;
+        this.userTransactionRepository = userTransactionRepository;
     }
 
     @Override
@@ -85,5 +88,20 @@ public class BootstrapUser implements CommandLineRunner {
         log.info("BOOTSTRAPPING TEST USERS");
 
         bankUserRepository.saveAll(Arrays.asList(admin,
-                user1, user2, user3, user4, user5));    }
+                user1, user2, user3, user4, user5));
+
+        bootstrapAdminTransactions(admin);
+
+    }
+
+    public void bootstrapAdminTransactions(BankUser user) {
+        UserTransaction userTransaction = UserTransaction.builder()
+                .fromTransactionId(bankUserRepository.findBankUserByUsername(user.getUsername()).getTransactionId())
+                .toTransactionId(bankUserRepository.findBankUserByUsername("cdavis").getTransactionId())
+                .amount(100.00)
+                .transferred(true)
+                .build();
+
+        userTransactionRepository.save(userTransaction);
+    }
 }

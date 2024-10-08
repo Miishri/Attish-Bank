@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bank.branch.attish.dto.BankDTO;
 import org.bank.branch.attish.models.BankUser;
+import org.bank.branch.attish.models.UserTransaction;
 import org.bank.branch.attish.respositories.BankUserRepository;
+import org.bank.branch.attish.respositories.UserTransactionRepository;
 import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class BankUserServiceImpl implements BankUserService {
 
     private final BankUserRepository bankUserRepository;
+    private final UserTransactionRepository userTransactionRepository;
     private final IUserAuthenticationFacade userAuthenticationFacade;
 
     @Override

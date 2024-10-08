@@ -4,6 +4,8 @@ package org.bank.branch.attish.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Builder
 @AllArgsConstructor
@@ -12,14 +14,15 @@ import lombok.*;
 @Setter
 @Getter
 @Data
-public class Transaction {
+public class UserTransaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(unique = true, updatable = false)
+    private UUID id;
 
     private Long fromTransactionId;
     private Long toTransactionId;
     private Double amount;
-    private boolean transferred;
+    private Boolean transferred;
 }

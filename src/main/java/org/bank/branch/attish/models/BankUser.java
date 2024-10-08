@@ -4,9 +4,11 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.apache.catalina.User;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +46,12 @@ public class BankUser {
 
     @NotBlank(message = "Birthdate cannot be empty")
     private String password;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserTransaction> userTransactions = new ArrayList<>();
 
     @CreationTimestamp
     private Timestamp creationDate;
