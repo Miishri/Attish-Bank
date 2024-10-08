@@ -1,4 +1,4 @@
-package org.bank.branch.attish.models;
+package org.bank.branch.attish.dto;
 
 import lombok.Builder;
 import lombok.Data;

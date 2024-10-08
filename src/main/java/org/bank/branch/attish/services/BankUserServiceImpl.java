@@ -2,14 +2,12 @@ package org.bank.branch.attish.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bank.branch.attish.models.BankDTO;
+import org.bank.branch.attish.dto.BankDTO;
 import org.bank.branch.attish.models.BankUser;
 import org.bank.branch.attish.respositories.BankUserRepository;
 import org.bank.branch.attish.security.auth.IUserAuthenticationFacade;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
